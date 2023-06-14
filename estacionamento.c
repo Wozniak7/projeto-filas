@@ -3,95 +3,95 @@
 #include <string.h>
 #include "fila.h"
 
-#define CAPACITY 12
+#define CAPACIDADE 12
 
 typedef struct {
-    char license_plate[20];
-    int moves;
-} Car;
+    char placa_carro[20];
+    int mover;
+} Carro;
 
 typedef struct {
-    Car cars[CAPACITY];
-    fila waiting_queue;
-    int count;
-} ParkingLot;
+    Carro carros[CAPACIDADE];
+    fila esperando_partida;
+    int contador;
+} Estacionamento;
 
-void initParkingLot(ParkingLot *parkingLot) {
-    parkingLot->count = 0;
-    inicia_fila(&(parkingLot->waiting_queue));
+void initEstacionamento(Estacionamento *Estacionamento) {
+    Estacionamento->contador = 0;
+    inicia_fila(&(Estacionamento->esperando_partida));
 }
 
-void parkCar(ParkingLot *parkingLot, const char *licensePlate) {
-    if (parkingLot->count < CAPACITY) {
-        Car car;
-        strcpy(car.license_plate, licensePlate);
-        car.moves = 0;
-        parkingLot->cars[parkingLot->count] = car;
-        parkingLot->count++;
-        printf("Carro %s estacionado.\n", licensePlate);
+void CarroEstacionado(Estacionamento *Estacionamento, const char *PlacaCarro) {
+    if (Estacionamento->contador < CAPACIDADE) {
+        Carro Carro;
+        strcpy(Carro.placa_carro, PlacaCarro);
+        Carro.mover = 0;
+        Estacionamento->carros[Estacionamento->contador] = Carro;
+        Estacionamento->contador++;
+        printf("Carro %s estacionado.\n", PlacaCarro);
     } else {
-        enfileira(verifica_tamanho(&(parkingLot->waiting_queue)), &(parkingLot->waiting_queue));
-        printf("Não há vagas disponíveis para o carro %s. Aguardando vaga.\n", licensePlate);
+        enfileira(verifica_tamanho(&(Estacionamento->esperando_partida)), &(Estacionamento->esperando_partida));
+        printf("Nao ha vagas disponiveis para o Carro %s. Aguardando vaga.\n", PlacaCarro);
     }
 }
 
-int findCarIndex(ParkingLot *parkingLot, const char *licensePlate) {
-    for (int i = 0; i < parkingLot->count; i++) {
-        if (strcmp(parkingLot->cars[i].license_plate, licensePlate) == 0) {
+int acharCarro(Estacionamento *Estacionamento, const char *PlacaCarro) {
+    for (int i = 0; i < Estacionamento->contador; i++) {
+        if (strcmp(Estacionamento->carros[i].placa_carro, PlacaCarro) == 0) {
             return i;
         }
     }
     return -1;
 }
 
-void removeCar(ParkingLot *parkingLot, const char *licensePlate) {
-    int carIndex = findCarIndex(parkingLot, licensePlate);
+void removeCarro(Estacionamento *Estacionamento, const char *PlacaCarro) {
+    int CarroIndex = acharCarro(Estacionamento, PlacaCarro);
 
-    if (carIndex != -1) {
-        Car car = parkingLot->cars[carIndex];
-        printf("Carro %s saiu após %d deslocamentos.\n", car.license_plate, car.moves);
-
-        for (int i = carIndex + 1; i < parkingLot->count; i++) {
-            parkingLot->cars[i - 1] = parkingLot->cars[i];
-            parkingLot->cars[i - 1].moves++;
+    if (CarroIndex != -1) {
+        for (int i = CarroIndex + 1; i < Estacionamento->contador; i++) {
+            Estacionamento->carros[i - 1] = Estacionamento->carros[i];
+            Estacionamento->carros[i - 1].mover++;
         }
 
-        parkingLot->count--;
+        Carro Carro = Estacionamento->carros[CarroIndex];
+        printf("Carro %s saiu apos %d deslocamentos.\n", Carro.placa_carro, Carro.mover);
 
-        if (!esta_vazia(&(parkingLot->waiting_queue))) {
-            int waitingMoves = desenfileira(&(parkingLot->waiting_queue));
-            Car waitingCar;
-            strcpy(waitingCar.license_plate, "");
-            waitingCar.moves = waitingMoves;
-            parkCar(parkingLot, waitingCar.license_plate);
+        Estacionamento->contador--;
+
+        if (!esta_vazia(&(Estacionamento->esperando_partida))) {
+            int esperandoMover = desenfileira(&(Estacionamento->esperando_partida));
+            Carro esperandoCarro;
+            strcpy(esperandoCarro.placa_carro, "");
+            esperandoCarro.mover = esperandoMover;
+            CarroEstacionado(Estacionamento, esperandoCarro.placa_carro);
         }
     } else {
-        printf("Carro %s não encontrado no estacionamento.\n", licensePlate);
+        printf("Carro %s nao encontrado no estacionamento.\n", PlacaCarro);
     }
 }
 
 int main() {
-    ParkingLot parkingLot;
-    initParkingLot(&parkingLot);
+    Estacionamento Estacionamento;
+    initEstacionamento(&Estacionamento);
 
-    char entry[2];
-    char licensePlate[20];
+    char entrada[2];
+    char PlacaCarro[20];
 
     while (1) {
         printf("Informe a entrada (C - Chegada, P - Partida, F - Finalizar): ");
-        scanf("%s", entry);
+        scanf("%s", entrada);
 
-        if (entry[0] == 'F') {
+        if (entrada[0] == 'F') {
             break;
         }
 
-        printf("Informe a placa do carro: ");
-        scanf("%s", licensePlate);
+        printf("Informe a placa do Carro: ");
+        scanf("%s", PlacaCarro);
 
-        if (entry[0] == 'C') {
-            parkCar(&parkingLot, licensePlate);
-        } else if (entry[0] == 'P') {
-            removeCar(&parkingLot, licensePlate);
+        if (entrada[0] == 'C') {
+            CarroEstacionado(&Estacionamento, PlacaCarro);
+        } else if (entrada[0] == 'P') {
+            removeCarro(&Estacionamento, PlacaCarro);
         }
     }
 
