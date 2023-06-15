@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "fila.h"
 
 void inicia_fila (fila *f){

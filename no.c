@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "no.h"
 struct no * aloca_no (int i){
     struct no * novo = (struct no *) malloc(sizeof(struct no));
