@@ -2,8 +2,8 @@
 #include "no.h"
 
 typedef struct {
-    no *primeiro;
-    no *ultimo;
+    struct no *primeiro;
+    struct no *ultimo;
     int tamanho;
 } fila;
 

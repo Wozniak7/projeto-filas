@@ -23,10 +23,10 @@ void initEstacionamento(Estacionamento *Estacionamento) {
 
 void CarroEstacionado(Estacionamento *Estacionamento, const char *PlacaCarro) {
     if (Estacionamento->contador < CAPACIDADE) {
-        Carro Carro;
-        strcpy(Carro.placa_carro, PlacaCarro);
-        Carro.mover = 0;
-        Estacionamento->carros[Estacionamento->contador] = Carro;
+        Carro carro;
+        strcpy(carro.placa_carro, PlacaCarro);
+        carro.mover = 1;
+        Estacionamento->carros[Estacionamento->contador] = carro;
         Estacionamento->contador++;
         printf("Carro %s estacionado.\n", PlacaCarro);
     } else {
@@ -53,17 +53,17 @@ void removeCarro(Estacionamento *Estacionamento, const char *PlacaCarro) {
             Estacionamento->carros[i - 1].mover++;
         }
 
-        Carro Carro = Estacionamento->carros[CarroIndex];
-        printf("Carro %s saiu apos %d deslocamentos.\n", Carro.placa_carro, Carro.mover);
+        Carro carro = Estacionamento->carros[CarroIndex];
+        printf("Carro %s saiu apos %d deslocamentos.\n", carro.placa_carro, carro.mover);
 
         Estacionamento->contador--;
 
         if (!esta_vazia(&(Estacionamento->esperando_partida))) {
             int esperandoMover = desenfileira(&(Estacionamento->esperando_partida));
-            Carro esperandoCarro;
-            strcpy(esperandoCarro.placa_carro, "");
-            esperandoCarro.mover = esperandoMover;
-            CarroEstacionado(Estacionamento, esperandoCarro.placa_carro);
+            Carro carroEsperando;
+            strcpy(carroEsperando.placa_carro, "");
+            carroEsperando.mover = esperandoMover;
+            CarroEstacionado(Estacionamento, carroEsperando.placa_carro);
         }
     } else {
         printf("Carro %s nao encontrado no estacionamento.\n", PlacaCarro);
